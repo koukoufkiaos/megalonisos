@@ -1,12 +1,18 @@
-[gd_scene load_steps=12 format=3 uid="uid://jtpi8k31hyko"]
+[gd_scene load_steps=19 format=3 uid="uid://jtpi8k31hyko"]
 
 [ext_resource type="Script" path="res://entities/dino/dino.gd" id="1_fq4np"]
 [ext_resource type="Texture2D" uid="uid://bta6ul400h7ji" path="res://entities/dino/dino.png" id="1_lrq33"]
-[ext_resource type="PackedScene" uid="uid://dnvjmmjmgocbe" path="res://util/state_machines/move_machine/move_machine.tscn" id="4_4ad1d"]
-[ext_resource type="PackedScene" uid="uid://mtprdvoimatd" path="res://util/state_machines/move_machine/states/jump_state/jump_state.tscn" id="4_xofax"]
-[ext_resource type="PackedScene" uid="uid://bqblfv61ml52b" path="res://util/components/move_component/enemy_move_component/enemy_move_component.tscn" id="5_0xkv7"]
-[ext_resource type="PackedScene" uid="uid://bofvusr0okft8" path="res://util/state_machines/move_machine/states/stand_state/stand_state.tscn" id="5_um3og"]
-[ext_resource type="PackedScene" uid="uid://duauo1f86xpy8" path="res://util/state_machines/move_machine/states/walk_state/walk_state.tscn" id="6_pj46e"]
+[ext_resource type="Script" path="res://util/state_machines/move_machine/move_machine.gd" id="3_etq7s"]
+[ext_resource type="Script" path="res://util/state_machines/move_machine/states/stand_state/stand_state.gd" id="4_8dln7"]
+[ext_resource type="Script" path="res://util/state_machines/move_machine/states/jump_state/jump_state.gd" id="5_tviho"]
+[ext_resource type="Script" path="res://util/state_machines/move_machine/states/walk_state/walk_state.gd" id="6_05d2u"]
+[ext_resource type="Script" path="res://util/components/move_component/player_move_component/player_move_component.gd" id="7_bno4h"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/health_machine.gd" id="8_5krqe"]
+[ext_resource type="PackedScene" uid="uid://dps0hyqtvjdex" path="res://util/components/health_component/health_component.tscn" id="9_q7htw"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/normal_state/normal_state.gd" id="9_vwfhh"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/hurt_state/hurt_state.gd" id="10_nqfho"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/heal_state/heal_state.gd" id="11_m4ocp"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/dead_state/dead_state.gd" id="12_hiscn"]
 
 [sub_resource type="Animation" id="Animation_m2f72"]
 length = 0.001
@@ -65,6 +71,10 @@ _data = {
 "walk_down": SubResource("Animation_rbv5v")
 }
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_pddlq"]
+radius = 7.0
+height = 16.0
+
 [node name="Dino" type="CharacterBody2D"]
 script = ExtResource("1_fq4np")
 
@@ -73,30 +83,71 @@ texture = ExtResource("1_lrq33")
 hframes = 24
 frame = 1
 
-[node name="MoveMachine" parent="." node_paths=PackedStringArray("target", "component", "animation_player", "initial_state") instance=ExtResource("4_4ad1d")]
-target = NodePath("..")
-component = NodePath("EnemyMoveComponent")
-animation_player = NodePath("../AnimationPlayer")
-initial_state = NodePath("StandState")
-
-[node name="EnemyMoveComponent" parent="MoveMachine" instance=ExtResource("5_0xkv7")]
-speed = 40.0
-
-[node name="StandState" parent="MoveMachine" node_paths=PackedStringArray("jump_state", "walk_state") instance=ExtResource("5_um3og")]
-jump_state = NodePath("../JumpState")
-walk_state = NodePath("../WalkState")
-animation = "stand_down"
-
-[node name="JumpState" parent="MoveMachine" node_paths=PackedStringArray("stand_state", "walk_state") instance=ExtResource("4_xofax")]
-stand_state = NodePath("../StandState")
-walk_state = NodePath("../WalkState")
-
-[node name="WalkState" parent="MoveMachine" node_paths=PackedStringArray("stand_state", "jump_state") instance=ExtResource("6_pj46e")]
-stand_state = NodePath("../StandState")
-jump_state = NodePath("../JumpState")
-animation = "walk_down"
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_abusa")
 }
+
+[node name="MoveMachine" type="Node2D" parent="." node_paths=PackedStringArray("target", "component", "animation_player", "initial_state")]
+script = ExtResource("3_etq7s")
+target = NodePath("..")
+component = NodePath("PlayerMoveComponent")
+animation_player = NodePath("../AnimationPlayer")
+initial_state = NodePath("StandState")
+
+[node name="StandState" type="Node2D" parent="MoveMachine" node_paths=PackedStringArray("jump_state", "walk_state")]
+script = ExtResource("4_8dln7")
+jump_state = NodePath("../JumpState")
+walk_state = NodePath("../WalkState")
+animation = "stand_down"
+
+[node name="JumpState" type="Node2D" parent="MoveMachine" node_paths=PackedStringArray("stand_state", "walk_state")]
+script = ExtResource("5_tviho")
+stand_state = NodePath("../StandState")
+walk_state = NodePath("../WalkState")
+
+[node name="WalkState" type="Node2D" parent="MoveMachine" node_paths=PackedStringArray("stand_state", "jump_state")]
+script = ExtResource("6_05d2u")
+stand_state = NodePath("../StandState")
+jump_state = NodePath("../JumpState")
+animation = "walk_down"
+
+[node name="PlayerMoveComponent" type="Node2D" parent="MoveMachine"]
+script = ExtResource("7_bno4h")
+speed = 25.0
+
+[node name="HealthMachine" type="Node2D" parent="." node_paths=PackedStringArray("target", "component", "animation_player", "initial_state")]
+script = ExtResource("8_5krqe")
+target = NodePath("..")
+component = NodePath("HealthComponent")
+animation_player = NodePath("../AnimationPlayer")
+initial_state = NodePath("NormalState")
+
+[node name="NormalState" type="Node2D" parent="HealthMachine" node_paths=PackedStringArray("hurt_state", "heal_state")]
+script = ExtResource("9_vwfhh")
+hurt_state = NodePath("../HurtState")
+heal_state = NodePath("../HealState")
+
+[node name="HurtState" type="Node2D" parent="HealthMachine" node_paths=PackedStringArray("normal_state", "dead_state")]
+script = ExtResource("10_nqfho")
+normal_state = NodePath("../NormalState")
+dead_state = NodePath("../DeadState")
+
+[node name="HealState" type="Node2D" parent="HealthMachine" node_paths=PackedStringArray("normal_state")]
+script = ExtResource("11_m4ocp")
+normal_state = NodePath("../NormalState")
+
+[node name="DeadState" type="Node2D" parent="HealthMachine"]
+script = ExtResource("12_hiscn")
+
+[node name="HealthComponent" parent="HealthMachine" instance=ExtResource("9_q7htw")]
+max_health = 20.0
+
+[node name="Collision" parent="HealthMachine/HealthComponent/Hurtbox" index="0"]
+position = Vector2(1, 0)
+shape = SubResource("CapsuleShape2D_pddlq")
+
+[connection signal="area_entered" from="HealthMachine/HealthComponent/Hurtbox" to="HealthMachine/NormalState" method="_on_hurtbox_area_entered"]
+[connection signal="timeout" from="HealthMachine/HealthComponent/Timer" to="HealthMachine/NormalState" method="_on_timer_timeout"]
+
+[editable path="HealthMachine/HealthComponent"]

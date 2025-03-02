@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bofvusr0okft8"]
-
-[ext_resource type="Script" path="res://util/state_machines/move_machine/states/stand_state/stand_state.gd" id="1_wrx8g"]
-
-[node name="StandState" type="Node2D"]
-script = ExtResource("1_wrx8g")

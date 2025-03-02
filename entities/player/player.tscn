@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bgcru68yv8sxh"]
+[gd_scene load_steps=26 format=3 uid="uid://bgcru68yv8sxh"]
 
 [ext_resource type="Script" path="res://entities/player/player.gd" id="1_hf0ua"]
 [ext_resource type="Texture2D" uid="uid://dr8p74b7pk6fv" path="res://entities/player/body/body/body.png" id="1_jhq5o"]
@@ -7,7 +7,13 @@
 [ext_resource type="Script" path="res://util/state_machines/move_machine/states/stand_state/stand_state.gd" id="5_y8bdj"]
 [ext_resource type="Script" path="res://util/state_machines/move_machine/states/jump_state/jump_state.gd" id="6_vbw74"]
 [ext_resource type="Script" path="res://util/state_machines/move_machine/states/walk_state/walk_state.gd" id="7_m3134"]
-[ext_resource type="PackedScene" uid="uid://d0e6aeckubq73" path="res://util/components/move_component/player_move_component/player_move_component.tscn" id="8_o6qwp"]
+[ext_resource type="Script" path="res://util/components/move_component/player_move_component/player_move_component.gd" id="8_xgfay"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/health_machine.gd" id="9_15u0c"]
+[ext_resource type="PackedScene" uid="uid://dps0hyqtvjdex" path="res://util/components/health_component/health_component.tscn" id="9_jxgaf"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/normal_state/normal_state.gd" id="10_kc50l"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/hurt_state/hurt_state.gd" id="12_4sfw5"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/heal_state/heal_state.gd" id="13_xidt2"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/dead_state/dead_state.gd" id="14_2q4ff"]
 
 [sub_resource type="Animation" id="Animation_j2g1s"]
 resource_name = "jump_down"
@@ -472,6 +478,10 @@ _data = {
 "walk_up": SubResource("Animation_ym8oy")
 }
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_pws4i"]
+radius = 6.0
+height = 28.0
+
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_hf0ua")
 
@@ -481,7 +491,6 @@ script = ExtResource("1_hf0ua")
 texture = ExtResource("1_jhq5o")
 hframes = 8
 vframes = 8
-frame = 5
 
 [node name="Hair" type="Sprite2D" parent="Body"]
 visible = false
@@ -535,5 +544,42 @@ stand_state = NodePath("../StandState")
 jump_state = NodePath("../JumpState")
 animation = "walk_down"
 
-[node name="PlayerMoveComponent" parent="MoveMachine" instance=ExtResource("8_o6qwp")]
+[node name="PlayerMoveComponent" type="Node2D" parent="MoveMachine"]
+script = ExtResource("8_xgfay")
 speed = 50.0
+
+[node name="HealthMachine" type="Node2D" parent="." node_paths=PackedStringArray("target", "component", "animation_player", "initial_state")]
+script = ExtResource("9_15u0c")
+target = NodePath("..")
+component = NodePath("HealthComponent")
+animation_player = NodePath("../AnimationPlayer")
+initial_state = NodePath("NormalState")
+
+[node name="NormalState" type="Node2D" parent="HealthMachine" node_paths=PackedStringArray("hurt_state", "heal_state")]
+script = ExtResource("10_kc50l")
+hurt_state = NodePath("../HurtState")
+heal_state = NodePath("../HealState")
+
+[node name="HurtState" type="Node2D" parent="HealthMachine" node_paths=PackedStringArray("normal_state", "dead_state")]
+script = ExtResource("12_4sfw5")
+normal_state = NodePath("../NormalState")
+dead_state = NodePath("../DeadState")
+
+[node name="HealState" type="Node2D" parent="HealthMachine" node_paths=PackedStringArray("normal_state")]
+script = ExtResource("13_xidt2")
+normal_state = NodePath("../NormalState")
+
+[node name="DeadState" type="Node2D" parent="HealthMachine"]
+script = ExtResource("14_2q4ff")
+
+[node name="HealthComponent" parent="HealthMachine" instance=ExtResource("9_jxgaf")]
+max_health = 2.0
+
+[node name="Collision" parent="HealthMachine/HealthComponent/Hurtbox" index="0"]
+position = Vector2(0, -3)
+shape = SubResource("CapsuleShape2D_pws4i")
+
+[connection signal="area_entered" from="HealthMachine/HealthComponent/Hurtbox" to="HealthMachine/NormalState" method="_on_hurtbox_area_entered"]
+[connection signal="timeout" from="HealthMachine/HealthComponent/Timer" to="HealthMachine/NormalState" method="_on_timer_timeout"]
+
+[editable path="HealthMachine/HealthComponent"]

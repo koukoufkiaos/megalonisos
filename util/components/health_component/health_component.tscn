@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://dps0hyqtvjdex"]
+
+[ext_resource type="Script" path="res://util/components/health_component/health_component.gd" id="1_0es1w"]
+
+[node name="HealthComponent" type="Node2D"]
+script = ExtResource("1_0es1w")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
