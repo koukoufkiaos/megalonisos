@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://duauo1f86xpy8"]
+
+[ext_resource type="Script" path="res://util/state_machines/move_machine/states/walk_state/walk_state.gd" id="1_xowtg"]
+
+[node name="WalkState" type="Node2D"]
+script = ExtResource("1_xowtg")

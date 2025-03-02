@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://gvs6xtefbh3t"]
+
+[ext_resource type="Script" path="res://util/state_machines/state_machine.gd" id="1_sft51"]
+
+[node name="StateMachine" type="Node2D"]
+script = ExtResource("1_sft51")
+
+[connection signal="state_changed" from="." to="." method="_on_state_changed"]

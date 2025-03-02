@@ -1,0 +1,2 @@
+class_name PassiveState
+extends AttackMachine.AttackState

@@ -1,0 +1,102 @@
+[gd_scene load_steps=12 format=3 uid="uid://jtpi8k31hyko"]
+
+[ext_resource type="Script" path="res://entities/dino/dino.gd" id="1_fq4np"]
+[ext_resource type="Texture2D" uid="uid://bta6ul400h7ji" path="res://entities/dino/dino.png" id="1_lrq33"]
+[ext_resource type="PackedScene" uid="uid://dnvjmmjmgocbe" path="res://util/state_machines/move_machine/move_machine.tscn" id="4_4ad1d"]
+[ext_resource type="PackedScene" uid="uid://mtprdvoimatd" path="res://util/state_machines/move_machine/states/jump_state/jump_state.tscn" id="4_xofax"]
+[ext_resource type="PackedScene" uid="uid://bqblfv61ml52b" path="res://util/components/move_component/enemy_move_component.tscn" id="5_0xkv7"]
+[ext_resource type="PackedScene" uid="uid://bofvusr0okft8" path="res://util/state_machines/move_machine/states/stand_state/stand_state.tscn" id="5_um3og"]
+[ext_resource type="PackedScene" uid="uid://duauo1f86xpy8" path="res://util/state_machines/move_machine/states/walk_state/walk_state.tscn" id="6_pj46e"]
+
+[sub_resource type="Animation" id="Animation_m2f72"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="Animation" id="Animation_u0upr"]
+resource_name = "stand_down"
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [0, 1, 2]
+}
+
+[sub_resource type="Animation" id="Animation_rbv5v"]
+resource_name = "walk_down"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [5, 6, 7, 8, 9]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_abusa"]
+_data = {
+"RESET": SubResource("Animation_m2f72"),
+"stand_down": SubResource("Animation_u0upr"),
+"walk_down": SubResource("Animation_rbv5v")
+}
+
+[node name="Dino" type="CharacterBody2D"]
+script = ExtResource("1_fq4np")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_lrq33")
+hframes = 24
+frame = 1
+
+[node name="MoveMachine" parent="." node_paths=PackedStringArray("target", "component", "animation_player", "initial_state") instance=ExtResource("4_4ad1d")]
+target = NodePath("..")
+component = NodePath("EnemyMoveComponent")
+animation_player = NodePath("../AnimationPlayer")
+initial_state = NodePath("StandState")
+
+[node name="EnemyMoveComponent" parent="MoveMachine" instance=ExtResource("5_0xkv7")]
+speed = 40.0
+
+[node name="StandState" parent="MoveMachine" node_paths=PackedStringArray("jump_state", "walk_state") instance=ExtResource("5_um3og")]
+jump_state = NodePath("../JumpState")
+walk_state = NodePath("../WalkState")
+animation = "stand_down"
+
+[node name="JumpState" parent="MoveMachine" node_paths=PackedStringArray("stand_state", "walk_state") instance=ExtResource("4_xofax")]
+stand_state = NodePath("../StandState")
+walk_state = NodePath("../WalkState")
+
+[node name="WalkState" parent="MoveMachine" node_paths=PackedStringArray("stand_state", "jump_state") instance=ExtResource("6_pj46e")]
+stand_state = NodePath("../StandState")
+jump_state = NodePath("../JumpState")
+animation = "walk_down"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_abusa")
+}

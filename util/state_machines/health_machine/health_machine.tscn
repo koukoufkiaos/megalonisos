@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://ccdd3fvpwwyn8"]
+
+[ext_resource type="Script" path="res://util/state_machines/health_machine/health_machine.gd" id="1_51bau"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/normal_state.gd" id="2_du128"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/hurt_state.gd" id="3_sa6um"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/heal_state.gd" id="4_gad22"]
+[ext_resource type="Script" path="res://util/state_machines/health_machine/states/dead_state.gd" id="5_0adaa"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6og0m"]
+
+[node name="HealthMachine" type="Node2D"]
+script = ExtResource("1_51bau")
+max_health = 20.0
+
+[node name="NormalState" type="Node2D" parent="."]
+script = ExtResource("2_du128")
+
+[node name="HurtState" type="Node2D" parent="."]
+script = ExtResource("3_sa6um")
+
+[node name="HealState" type="Node2D" parent="."]
+script = ExtResource("4_gad22")
+
+[node name="DeadState" type="Node2D" parent="."]
+script = ExtResource("5_0adaa")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_6og0m")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 15.0
+one_shot = true
+
+[connection signal="area_entered" from="Hurtbox" to="NormalState" method="_on_hurtbox_area_entered"]
+[connection signal="timeout" from="Timer" to="NormalState" method="_on_timer_timeout"]

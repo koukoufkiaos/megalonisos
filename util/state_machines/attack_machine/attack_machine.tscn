@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dni2s22cs3ey8"]
+
+[ext_resource type="Script" path="res://util/state_machines/attack_machine/attack_machine.gd" id="1_pjl5v"]
+[ext_resource type="Script" path="res://util/state_machines/attack_machine/states/passive_state.gd" id="2_428vc"]
+
+[node name="AttackMachine" type="Node2D"]
+script = ExtResource("1_pjl5v")
+
+[node name="PassiveState" type="Node2D" parent="."]
+script = ExtResource("2_428vc")
