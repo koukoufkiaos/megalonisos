@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bta6ul400h7ji" path="res://entities/dino/dino.png" id="1_lrq33"]
 [ext_resource type="PackedScene" uid="uid://dnvjmmjmgocbe" path="res://util/state_machines/move_machine/move_machine.tscn" id="4_4ad1d"]
 [ext_resource type="PackedScene" uid="uid://mtprdvoimatd" path="res://util/state_machines/move_machine/states/jump_state/jump_state.tscn" id="4_xofax"]
-[ext_resource type="PackedScene" uid="uid://bqblfv61ml52b" path="res://util/components/move_component/enemy_move_component.tscn" id="5_0xkv7"]
+[ext_resource type="PackedScene" uid="uid://bqblfv61ml52b" path="res://util/components/move_component/enemy_move_component/enemy_move_component.tscn" id="5_0xkv7"]
 [ext_resource type="PackedScene" uid="uid://bofvusr0okft8" path="res://util/state_machines/move_machine/states/stand_state/stand_state.tscn" id="5_um3og"]
 [ext_resource type="PackedScene" uid="uid://duauo1f86xpy8" path="res://util/state_machines/move_machine/states/walk_state/walk_state.tscn" id="6_pj46e"]
 

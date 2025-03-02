@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://util/state_machines/move_machine/states/stand_state/stand_state.gd" id="5_y8bdj"]
 [ext_resource type="Script" path="res://util/state_machines/move_machine/states/jump_state/jump_state.gd" id="6_vbw74"]
 [ext_resource type="Script" path="res://util/state_machines/move_machine/states/walk_state/walk_state.gd" id="7_m3134"]
-[ext_resource type="PackedScene" uid="uid://d0e6aeckubq73" path="res://util/components/move_component/PlayerMoveComponent.tscn" id="8_o6qwp"]
+[ext_resource type="PackedScene" uid="uid://d0e6aeckubq73" path="res://util/components/move_component/player_move_component/player_move_component.tscn" id="8_o6qwp"]
 
 [sub_resource type="Animation" id="Animation_j2g1s"]
 resource_name = "jump_down"
